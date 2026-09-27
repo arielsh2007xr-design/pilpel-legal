@@ -16,5 +16,10 @@ Food photos in the App Store screenshots (demo account "מיכל"). Unsplash and
 | מרק עוף | CC0 1.0 (public domain) | Alabama Extension | https://www.flickr.com/photos/184594136@N08/50408986928 |
 | פוקאצ'ה | CC BY 2.0 | jeffreyw | https://www.flickr.com/photos/7927684@N03/15622276051 |
 | בראוניז | CC0 1.0 (public domain) | — | https://www.rawpixel.com/image/5903810/photo-image-background-public-domain-food |
+| עוף בסילאן ושומשום | CC BY 2.0 | jeffreyw | https://www.flickr.com/photos/7927684@N03/7223830862 |
+| פרגיות על הגריל | CC0 1.0 (public domain) | Vishnu Chandra | https://wordpress.org/photos/photo/1636a16e72/ |
+| עוף בתנור עם תפוחי אדמה | CC BY 2.0 | nyaa_birdies_perch | https://www.flickr.com/photos/94862897@N00/5869503166 |
+| עוגת תפוחים | CC BY 2.0 | WordRidden | https://www.flickr.com/photos/97844767@N00/10100920 |
+| מוקפץ עוף וירקות | CC BY 2.0 | jeffreyw | https://www.flickr.com/photos/7927684@N03/4924060833 |
 
 The handwritten recipe page ("עוגת שמרים של סבתא רחל") was rendered for the demo (Google Font "Playpen Sans Hebrew", OFL).
