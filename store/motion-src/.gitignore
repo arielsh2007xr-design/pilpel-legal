@@ -1,0 +1,7 @@
+node_modules/
+out/
+stills/
+cfg/
+clips_*.mp4
+public/app_*.mp4
+public/first_*.png
