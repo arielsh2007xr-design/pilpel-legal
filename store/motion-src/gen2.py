@@ -95,7 +95,7 @@ ADS['c4-grandma'] = dict(
     caps=[{'l1': 'תמונה אחת', 'l2': 'והמתכון מפוענח', 'from': 128, 'to': g},
           {'l1': 'המתכון של סבתא רחל', 'l2': 'נשמר לתמיד', 'from': g, 'to': 318},
           {'l1': 'שולחים לכל המשפחה', 'l2': 'בקישור אחד', 'from': 318, 'to': 420}],
-    chat={'from': 318, 'to': 420, 'og': A('og-card.png') if has('og-card.png') else A('recipe-grandma.png'), 'title': 'עוגת שמרים של סבתא רחל'},
+    chat={'from': 318, 'to': 420, 'og': A('og-card-grandma.png') if has('og-card-grandma.png') else A('recipe-grandma.png'), 'title': 'עוגת שמרים של סבתא רחל'},
     cam=[[0, 1, .5, .5]], endAt=420, cta='המתכונים של המשפחה, במקום אחד', shutter=116)
 
 # 5 ---- greasy hands / cooking mode
