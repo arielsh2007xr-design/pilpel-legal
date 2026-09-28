@@ -72,6 +72,60 @@ const BoxLine = ({text, color, size, start, y}) => {
   );
 };
 
+
+// ---------- minimal style ----------
+const ease = Easing.bezier(0.22, 1, 0.36, 1);
+const Line = ({text, color, size, y, start, end, shadow, weight = 800}) => {
+  const f = useCurrentFrame();
+  const a = interpolate(f, [start, start + 14], [0, 1], {...clamp, easing: ease});
+  const b = end ? interpolate(f, [end - 10, end], [1, 0], {...clamp, easing: ease}) : 1;
+  return (
+    <div style={{position: 'absolute', top: y, left: 60, right: 60, textAlign: 'center', fontSize: size, fontWeight: weight, color, lineHeight: 1.15, ...font,
+      opacity: a * b, transform: `translateY(${(1 - a) * 26 - (1 - b) * 12}px)`, textShadow: shadow ? '0 4px 24px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.45)' : 'none'}}>{text}</div>
+  );
+};
+const HookText = ({l1, l2, from, to, y = 300}) => {
+  const f = useCurrentFrame();
+  if (f < from || f >= to) return null;
+  const sz = Math.min(est(l1, 104), l2 ? est(l2, 104) : 999);
+  return (
+    <AbsoluteFill>
+      <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.25) 38%, rgba(0,0,0,0) 55%)', opacity: interpolate(f, [from, from + 10, to - 10, to], [0, 1, 1, 0], clamp)}} />
+      <Line text={l1} color="#fff" size={sz} y={y} start={from} end={to} shadow />
+      {l2 && <Line text={l2} color="#FFD9A8" size={sz} y={y + sz * 1.22} start={from + 6} end={to} shadow />}
+    </AbsoluteFill>
+  );
+};
+const CalmCaption = ({l1, l2, from, to}) => {
+  const f = useCurrentFrame();
+  if (f < from || f >= to) return null;
+  const sz = Math.min(est(l1, 80), l2 ? est(l2, 80) : 999);
+  return (
+    <AbsoluteFill>
+      <Line text={l1} color={INK} size={sz} y={l2 ? 70 : 118} start={from} end={to} />
+      {l2 && <Line text={l2} color={ORANGE} size={sz} y={70 + sz * 1.2} start={from + 6} end={to} />}
+    </AbsoluteFill>
+  );
+};
+const EndCalm = ({cta}) => {
+  const f = useCurrentFrame();
+  const a = (d) => interpolate(f, [d, d + 16], [0, 1], {...clamp, easing: ease});
+  const breathe = 1 + 0.012 * Math.sin(f / 9);
+  const sz = est(cta, 74);
+  return (
+    <AbsoluteFill style={{background: CREAM}}>
+      <div style={{position: 'absolute', top: 300, left: 60, right: 60, textAlign: 'center', fontSize: sz, fontWeight: 800, color: INK, ...font, opacity: a(0), transform: `translateY(${(1 - a(0)) * 20}px)`}}>{cta}</div>
+      <div style={{position: 'absolute', left: 340, top: 600, width: 400, height: 400, borderRadius: 90, overflow: 'hidden', opacity: a(6), transform: `scale(${(0.9 + 0.1 * a(6)) * breathe})`, boxShadow: '0 30px 70px rgba(120,60,20,0.28)'}}>
+        <Img src={src('icon.png')} style={{width: 400, height: 400}} />
+      </div>
+      <div style={{position: 'absolute', top: 1060, left: 0, right: 0, textAlign: 'center', fontSize: 170, fontWeight: 800, color: ORANGE, ...font, opacity: a(12), transform: `translateY(${(1 - a(12)) * 20}px)`}}>פלפל</div>
+      <div style={{position: 'absolute', left: 260, top: 1330, width: 560, height: 116, borderRadius: 58, background: ORANGE, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: a(18), transform: `scale(${(0.94 + 0.06 * a(18)) * breathe})`, ...font}}>
+        <span style={{color: '#fff', fontSize: 60, fontWeight: 800}}>חינם בחנות</span>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 // ---------- full-bleed "pain" scenes ----------
 const Icon = ({d, label, y}) => (
   <div style={{position: 'absolute', right: 34, top: y, width: 90, textAlign: 'center', color: '#fff', ...font}}>
@@ -85,6 +139,7 @@ const SEND = 'M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z';
 const BOOK = 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z';
 
 const Reel = ({c}) => {
+  const quiet = c.quiet;
   const f = useCurrentFrame();
   const {fps} = useVideoConfig();
   const kb = interpolate(f, [0, c.to], [1.06, 1.16]);
@@ -104,7 +159,7 @@ const Reel = ({c}) => {
     <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
       <Img src={src(c.img)} style={{position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${kb}) translateX(${shift}px)`}} />
       <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 18%, rgba(0,0,0,0) 62%, rgba(0,0,0,.7) 100%)'}} />
-      <div style={{position: 'absolute', top: 70, left: 0, right: 0, textAlign: 'center', color: '#fff', fontSize: 40, fontWeight: 700, ...font, textShadow: '0 2px 6px rgba(0,0,0,.5)'}}>רילס</div>
+      {!quiet && <div style={{position: 'absolute', top: 70, left: 0, right: 0, textAlign: 'center', color: '#fff', fontSize: 40, fontWeight: 700, ...font, textShadow: '0 2px 6px rgba(0,0,0,.5)'}}>רילס</div>}
       <Icon d={HEART} label={c.likes || '12.4K'} y={1050} />
       <Icon d={BUBBLE} label={c.comments || '3,214'} y={1200} />
       <Icon d={SEND} label="" y={1350} />
@@ -208,8 +263,8 @@ const SavedGrid = ({c}) => {
   const f = useCurrentFrame();
   if (f < c.from || f >= c.to + 30) return null;
   // fast scroll that decelerates
-  const y = interpolate(f, [c.from, c.slowAt, c.to], [0, 5200, 5600], {...clamp, easing: Easing.out(Easing.cubic)});
-  const blur = interpolate(f, [c.from, c.from + 10, c.slowAt - 10, c.slowAt], [0, 5, 5, 0], clamp);
+  const y = c.calm ? interpolate(f, [c.from, c.to + 30], [0, 900], clamp) : interpolate(f, [c.from, c.slowAt, c.to], [0, 5200, 5600], {...clamp, easing: Easing.out(Easing.cubic)});
+  const blur = c.calm ? 0 : interpolate(f, [c.from, c.from + 10, c.slowAt - 10, c.slowAt], [0, 5, 5, 0], clamp);
   const tile = 356, gap = 6;
   const tiles = [];
   for (let i = 0; i < 60; i++) tiles.push(i);
@@ -269,7 +324,7 @@ const Phone = ({cfg}) => {
   const f = useCurrentFrame();
   const {fps} = useVideoConfig();
   const m = cfg.morph; // frame where the full-bleed collapses into the phone
-  const k = spring({frame: f - m, fps, config: {damping: 18, stiffness: 95}});
+  const k = cfg.min ? interpolate(f, [m, m + 24], [0, 1], {...clamp, easing: Easing.bezier(0.65, 0, 0.35, 1)}) : spring({frame: f - m, fps, config: {damping: 18, stiffness: 95}});
   const endOut = interpolate(f, [cfg.endAt - 8, cfg.endAt + 4], [1, 0], clamp);
   if (f >= cfg.endAt + 4) return null;
   const x = interpolate(k, [0, 1], [0, PH.x]), y = interpolate(k, [0, 1], [0, PH.y]);
@@ -433,14 +488,14 @@ export const Creative = ({cfg}) => {
       <Phone cfg={cfg} />
       {(cfg.chat) && <Chat c={cfg.chat} />}
       <AbsoluteFill style={{background: `linear-gradient(180deg, ${CREAM} 0px, ${CREAM} 250px, rgba(255,246,234,0) 330px)`, height: 340, opacity: interpolate(f, [cfg.morph + 6, cfg.morph + 14], [0, 1], clamp)}} />
-      {cfg.cards.map((c, i) => <BleedCard key={i} {...c} />)}
-      {cfg.caps.map((c, i) => <TopCaption key={i} {...c} />)}
-      {f >= cfg.endAt && <AbsoluteFill><EndWrap cfg={cfg} /></AbsoluteFill>}
+      {cfg.min ? cfg.cards.map((c, i) => <HookText key={i} {...c} />) : cfg.cards.map((c, i) => <BleedCard key={i} {...c} />)}
+      {cfg.min ? cfg.caps.map((c, i) => <CalmCaption key={i} {...c} />) : cfg.caps.map((c, i) => <TopCaption key={i} {...c} />)}
+      {f >= cfg.endAt && <AbsoluteFill style={{opacity: cfg.min ? interpolate(f, [cfg.endAt, cfg.endAt + 12], [0, 1], clamp) : 1}}><EndWrap cfg={cfg} /></AbsoluteFill>}
     </AbsoluteFill>
   );
 };
 const EndWrap = ({cfg}) => {
   const f = useCurrentFrame();
-  return <div style={{position: 'absolute', inset: 0}}><Shift from={cfg.endAt}><EndCard cta={cfg.cta} /></Shift></div>;
+  return <div style={{position: 'absolute', inset: 0}}><Shift from={cfg.endAt}>{cfg.min ? <EndCalm cta={cfg.cta} /> : <EndCard cta={cfg.cta} />}</Shift></div>;
 };
 const Shift = ({from, children}) => <Sequence from={from}>{children}</Sequence>;
