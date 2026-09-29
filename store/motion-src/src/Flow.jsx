@@ -183,14 +183,14 @@ const CookScene = ({s, f}) => {
   const bob = Math.sin(t / 5) * 10;
   const stir = Math.sin(t / 4) * 4;
   const prog = lerp(t, 6, s.len - 6, 0, 1, Easing.inOut(Easing.quad));
-  const steps = ['קורא את הרילס', 'מוציא כמויות', 'מסדר שלבים'];
+  const steps = s.steps || ['קורא את הרילס', 'מוציא כמויות', 'מסדר שלבים'];
   return (
     <div style={{position: 'absolute', left: 0, top: 0, width: 1080, height: 1920, transform: `scale(${SC})`, transformOrigin: '0 0', background: CREAM, ...font}}>
       <div style={{position: 'absolute', top: 60, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', fontSize: 42, fontWeight: 600, color: INK}}><span>9:41</span></div>
       <div style={{position: 'absolute', top: 170, right: 60, fontSize: 50, fontWeight: 800, color: INK}}>פלפל עובד על זה</div>
       <div style={{position: 'absolute', top: 270, left: 50, right: 50, height: 190, background: '#fff', borderRadius: 40, boxShadow: '0 6px 20px rgba(80,40,10,.07)', display: 'flex', alignItems: 'center', gap: 30, padding: '0 30px', direction: 'rtl'}}>
         <Img src={src(s.thumb)} style={{width: 130, height: 130, borderRadius: 26, objectFit: 'cover'}} />
-        <div><div style={{fontSize: 30, color: ORANGE, fontWeight: 700}}>מאינסטגרם</div><div style={{fontSize: 42, fontWeight: 800, color: INK, marginTop: 6}}>{s.title}</div></div>
+        <div><div style={{fontSize: 30, color: ORANGE, fontWeight: 700}}>{s.source || 'מאינסטגרם'}</div><div style={{fontSize: 42, fontWeight: 800, color: INK, marginTop: 6}}>{s.title}</div></div>
       </div>
       {/* steam */}
       {[0, 1, 2].map((k) => {

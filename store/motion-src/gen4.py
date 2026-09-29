@@ -12,7 +12,7 @@ ADS['f1-link'] = dict(
     t={'pill': 50, 'pillLand': 100, 'phone': 60, 'appIn': 60, 'end': 352},
     screens=[{'src': A('paste-empty.png'), 'from': 58, 'enter': 'fade', 'dur': 1},
              {'src': A('paste-filled.png'), 'from': 100, 'enter': 'fade', 'dur': 10},
-             {'src': A('loading-3.png'), 'from': 124, 'enter': 'fade', 'dur': 14},
+             {'type': 'cook', 'from': 124, 'enter': 'fade', 'dur': 12, 'len': 62, 'thumb': A('cake-slice.png'), 'title': 'עוגת שוקולד פאדג׳ית', 'chips': ['שוקולד מריר', 'חמאה', 'סוכר']},
              {'src': A('recipe-cake-full.png'), 'from': 186, 'enter': 'mask', 'dur': 22, 'mx': .5, 'my': .768,
               'keys': [[208, 0], [222, 0], [272, 2330]], 'sticky': STK('recipe-cake.png')}],
     taps=[{'x': .5, 'y': .768, 'at': 118}],
@@ -30,17 +30,19 @@ ADS['f2-grandma'] = dict(
     intro={'kind': 'paper', 'img': A('grandma-page.jpg'), 'scan': [38, 66]},
     t={'phone': 64, 'appIn': 72, 'end': 352},
     screens=[{'src': A('scan-sheet.png'), 'from': 72, 'enter': 'fade', 'dur': 14},
-             {'src': A('scan-loading.png'), 'from': 124, 'enter': 'fade', 'dur': 12},
-             {'src': A('recipe-grandma-full.png'), 'from': 160, 'enter': 'mask', 'dur': 22, 'mx': .5, 'my': .81,
-              'keys': [[182, 0], [198, 0], [252, 2750]], 'sticky': STK('recipe-grandma.png')}],
+             {'type': 'cook', 'from': 124, 'enter': 'fade', 'dur': 12, 'len': 60, 'thumb': A('grandma-page.jpg'), 'title': 'עוגת שמרים של סבתא', 'source': 'מצילום',
+              'steps': ['קורא את כתב היד', 'מוציא כמויות', 'מסדר שלבים'], 'chips': ['½ ק״ג קמח', '200 גרם חמאה', '2 ביצים']},
+             {'src': A('recipe-grandma-full.png'), 'from': 184, 'enter': 'mask', 'dur': 22, 'mx': .5, 'my': .42,
+              'keys': [[206, 0], [218, 0], [268, 2750]], 'sticky': STK('recipe-grandma.png')}],
     taps=[{'x': .5, 'y': .81, 'at': 118}],
-    breakouts=[{'from': 258, 'to': 310, 'x0': 60, 'x1': 1020, 'y0': 2966, 'y1': 3128}],
+    breakouts=[{'from': 276, 'to': 328, 'x0': 60, 'x1': 1020, 'y0': 2966, 'y1': 3128}],
     caps=[{'l1': 'המתכון של סבתא.', 'l2': 'דף אחד. אין גיבוי.', 'from': -8, 'to': 62, 'big': True},
-          {'l1': 'מצלמים את הדף.', 'from': 62, 'to': 160},
-          {'l1': 'והכתב של סבתא', 'l2': 'הופך למתכון מסודר.', 'from': 160, 'to': 300},
+          {'l1': 'מצלמים את הדף.', 'from': 62, 'to': 124},
+          {'l1': 'פלפל קורא', 'l2': 'את הכתב של סבתא.', 'from': 124, 'to': 184},
+          {'l1': 'והופך אותו', 'l2': 'למתכון מסודר.', 'from': 184, 'to': 300},
           {'l1': 'נשמר לתמיד.', 'from': 300, 'to': 352}],
-    cam=[[0, 1, .5, .5], [100, 1, .5, .5], [112, 1.1, .5, .72], [124, 1.1, .5, .72], [138, 1, .5, .5], [254, 1, .5, .5], [268, 1.1, .5, .2], [306, 1.1, .5, .2], [322, 1, .5, .5]],
-    endLine='המתכונים של הבית. במקום אחד.', ding=160, shutter=40)
+    cam=[[0, 1, .5, .5], [100, 1, .5, .5], [112, 1.1, .5, .72], [124, 1.1, .5, .72], [138, 1, .5, .5], [272, 1, .5, .5], [284, 1.1, .5, .2], [324, 1.1, .5, .2], [340, 1, .5, .5]],
+    endLine='המתכונים של הבית. במקום אחד.', ding=184, shutter=40)
 
 # 3 ---- cooking mode
 ADS['f3-cook'] = dict(
@@ -124,5 +126,8 @@ if __name__ == '__main__':
         json.dump(c, open(os.path.join(HERE, f'cfg2/{k}.json'), 'w'), ensure_ascii=False, indent=1)
         dur = (c['t']['end'] + END_F) / 30
         ev = events(c)
+        for sc in c['screens']:
+            if sc.get('type') == 'cook':
+                for i in range(3): ev.append(['pop', (sc['from'] + 14 + i * 11) / 30])
         audio.render(ev, dur, os.path.join(HERE, f'out2/a_{k}.wav'), True); audio.render(ev, dur, os.path.join(HERE, f'out2/a_{k}_sfx.wav'), False)
         print(k, round(dur, 2))
