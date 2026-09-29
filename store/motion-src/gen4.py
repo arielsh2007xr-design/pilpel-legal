@@ -3,7 +3,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from gen2 import A, foods
 END_F = 78
-STK = lambda top: {'src': A(top), 'h': 270}
+STK = lambda top: {'src': A(top), 'btn': [1644, 1836]}
 ADS = {}
 
 # 1 ---- reel link from the comments

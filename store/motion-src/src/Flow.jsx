@@ -163,10 +163,74 @@ const ScreenImg = ({s, f}) => {
   return (
     <div style={{position: 'absolute', inset: 0, overflow: 'hidden', background: CREAM}}>
       <Img src={src(s.src)} style={{position: 'absolute', top: -y * SC, left: 0, width: P.w}} />
-      {s.sticky && <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: s.sticky.h * SC, overflow: 'hidden'}}><Img src={src(s.sticky.src)} style={{position: 'absolute', bottom: 0, left: 0, width: P.w}} /></div>}
+      {s.sticky && (s.sticky.btn ? (
+        <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: (1920 - s.sticky.btn[0] + 40) * SC, background: `linear-gradient(180deg, rgba(255,246,234,0) 0%, ${CREAM} 22%)`}}>
+          <div style={{position: 'absolute', left: 60 * SC, width: 960 * SC, top: 40 * SC, height: (s.sticky.btn[1] - s.sticky.btn[0]) * SC, overflow: 'hidden', borderRadius: 48 * SC, boxShadow: '0 10px 24px rgba(192,84,21,.25)'}}>
+            <Img src={src(s.sticky.src)} style={{position: 'absolute', left: -60 * SC, top: -s.sticky.btn[0] * SC, width: P.w}} />
+          </div>
+          <div style={{position: 'absolute', left: '32%', right: '32%', bottom: 16 * SC, height: 12 * SC, borderRadius: 6, background: '#1d1410'}} />
+        </div>
+      ) : <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: s.sticky.h * SC, overflow: 'hidden'}}><Img src={src(s.sticky.src)} style={{position: 'absolute', bottom: 0, left: 0, width: P.w}} /></div>)}
     </div>
   );
 };
+
+// ---------------- animated "Pilpel is cooking" loader ----------------
+const CookScene = ({s, f}) => {
+  const {fps} = useVideoConfig();
+  const t = f - s.from;
+  const u = 1 / SC; // work in 1080-space, scaled down
+  const bob = Math.sin(t / 5) * 10;
+  const stir = Math.sin(t / 4) * 4;
+  const prog = lerp(t, 6, s.len - 6, 0, 1, Easing.inOut(Easing.quad));
+  const steps = ['קורא את הרילס', 'מוציא כמויות', 'מסדר שלבים'];
+  return (
+    <div style={{position: 'absolute', left: 0, top: 0, width: 1080, height: 1920, transform: `scale(${SC})`, transformOrigin: '0 0', background: CREAM, ...font}}>
+      <div style={{position: 'absolute', top: 60, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', fontSize: 42, fontWeight: 600, color: INK}}><span>9:41</span></div>
+      <div style={{position: 'absolute', top: 170, right: 60, fontSize: 50, fontWeight: 800, color: INK}}>פלפל עובד על זה</div>
+      <div style={{position: 'absolute', top: 270, left: 50, right: 50, height: 190, background: '#fff', borderRadius: 40, boxShadow: '0 6px 20px rgba(80,40,10,.07)', display: 'flex', alignItems: 'center', gap: 30, padding: '0 30px', direction: 'rtl'}}>
+        <Img src={src(s.thumb)} style={{width: 130, height: 130, borderRadius: 26, objectFit: 'cover'}} />
+        <div><div style={{fontSize: 30, color: ORANGE, fontWeight: 700}}>מאינסטגרם</div><div style={{fontSize: 42, fontWeight: 800, color: INK, marginTop: 6}}>{s.title}</div></div>
+      </div>
+      {/* steam */}
+      {[0, 1, 2].map((k) => {
+        const c = ((t + k * 12) % 36) / 36;
+        return <div key={k} style={{position: 'absolute', left: 470 + (k - 1) * 70 + Math.sin((t + k * 9) / 6) * 16, top: 700 - c * 170, width: 70, height: 110, borderRadius: '50%', background: 'rgba(255,255,255,.9)', filter: 'blur(14px)', opacity: Math.sin(c * Math.PI) * 0.9}} />;
+      })}
+      <Img src={src('cooking.png')} style={{position: 'absolute', left: 540 - 205, top: 660 + bob, height: 500, transform: `rotate(${stir}deg)`, transformOrigin: '50% 90%'}} />
+      {/* ingredient chips fly out of the pot */}
+      {s.chips.map((c, k) => {
+        const a = t - 14 - k * 11;
+        if (a < 0) return null;
+        const up = spring({frame: a, fps, config: {damping: 14, stiffness: 120}});
+        const x = 540 + (k - 1) * 270 * up;
+        const y = 880 - (k === 1 ? 360 : 290) * up;
+        return <div key={k} style={{position: 'absolute', left: x, top: y, transform: `translate(-50%, -50%) scale(${0.4 + 0.6 * up}) rotate(${(k - 1) * -5 * up}deg)`, opacity: Math.min(1, up * 2),
+          background: '#fff', borderRadius: 40, padding: '18px 32px', fontSize: 42, fontWeight: 800, color: INK, boxShadow: '0 12px 30px rgba(120,60,20,.2)', whiteSpace: 'nowrap', direction: 'rtl'}}>{c}</div>;
+      })}
+      {/* progress */}
+      <div style={{position: 'absolute', top: 1170, left: 170, right: 170, height: 16, borderRadius: 8, background: '#F1DDC7', overflow: 'hidden'}}>
+        <div style={{position: 'absolute', right: 0, top: 0, bottom: 0, width: `${prog * 100}%`, background: ORANGE, borderRadius: 8}} />
+      </div>
+      <div style={{position: 'absolute', top: 1240, left: 90, right: 90, background: '#fff', borderRadius: 40, padding: '20px 40px', boxShadow: '0 6px 20px rgba(80,40,10,.07)', direction: 'rtl'}}>
+        {steps.map((st, k) => {
+          const done = prog > (k + 1) / 3.2;
+          const active = !done && prog > k / 3.2;
+          const ck = spring({frame: t - (s.len * (k + 1) / 3.4), fps, config: {damping: 14, stiffness: 200}});
+          return (
+            <div key={k} style={{display: 'flex', alignItems: 'center', gap: 24, height: 110, borderTop: k ? '2px solid #f3e9dd' : 'none'}}>
+              <div style={{width: 58, height: 58, borderRadius: 29, background: done ? GREEN : '#f3e9dd', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 34, fontWeight: 800, transform: `scale(${done ? 0.8 + 0.2 * ck : 1})`}}>
+                {done ? '✓' : active ? <div style={{width: 30, height: 30, borderRadius: 15, border: `5px solid ${ORANGE}`, borderTopColor: 'transparent', transform: `rotate(${t * 18}deg)`}} /> : null}
+              </div>
+              <span style={{fontSize: 42, fontWeight: done || active ? 800 : 500, color: done || active ? INK : '#a89684'}}>{st}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 const Screens = ({cfg}) => {
   const f = useCurrentFrame();
   const list = cfg.screens;
@@ -189,7 +253,7 @@ const Screens = ({cfg}) => {
           const q = lerp(f, nxt.from, nxt.from + (nxt.dur || 14), 0, 1, INOUT);
           lv = {transform: `translateX(${q * P.w * 0.3}px)`, filter: `brightness(${1 - 0.2 * q})`};
         }
-        return <div key={k} style={{position: 'absolute', inset: 0, ...st, ...lv}}><ScreenImg s={s} f={f} /></div>;
+        return <div key={k} style={{position: 'absolute', inset: 0, ...st, ...lv}}>{s.type === 'cook' ? <CookScene s={s} f={f} /> : <ScreenImg s={s} f={f} />}</div>;
       })}
     </>
   );
